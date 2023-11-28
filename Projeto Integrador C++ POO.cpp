@@ -1,107 +1,60 @@
-#include <iostream>
-#include <vector>
-#include <string>
 
-
-
-enum class StatusProduto {
-    EmEstoque,
-    Reposicao,
-    Esgotado
-};
-
-class Produto {
-
-
-
+class Bebida {
 public:
-
-
-    Produto(const string& nome, int quantidade, int quantidadeMinima)
-        : nome(nome), quantidade(quantidade), quantidadeMinima(quantidadeMinima) {}
-
-
+    Bebida(const string& nome, const string& tipo, int quantidadeNosEngradados, int quantidadeNasGarrafas)
+        : nome(nome), tipo(tipo), quantidadeNosEngradados(quantidadeNosEngradados), quantidadeNasGarrafas(quantidadeNasGarrafas) {}
 
     string getNome() const { return nome; }
-    int getQuantidade() const { return quantidade; }
-    int getQuantidadeMinima() const { return quantidadeMinima; }
-
-    StatusProduto getStatus() const {
-        return quantidade < quantidadeMinima ? StatusProduto::Reposicao : StatusProduto::EmEstoque;
-    }
+    string getTipo() const { return tipo; }
+    int getQuantidadeNosEngradados() const { return quantidadeNosEngradados; }
+    int getQuantidadeNasGarrafas() const { return quantidadeNasGarrafas; }
 
 private:
-
-
-
-
     string nome;
-    int quantidade;
-    int quantidadeMinima;
+    string tipo;
+    int quantidadeNosEngradados;
+    int quantidadeNasGarrafas;
 };
 
-class Estoque {
-
-
+class EngradadoDeBebidas {
 public:
+    Engradado(int quantidadeBebidas, int quantidadeGarrafas)
+        : quantidadeBebidas(quantidadeBebidas), quantidadeGarrafas(quantidadeGarrafas) {}
 
-    void adicaoProduto(const Produto& produto) {
-        produtos.push_back(produto);
+    int getQuantidadeBebidas() const { return quantidadeBebidas; }
+    int getQuantidadeGarrafas() const { return quantidadeGarrafas; }
+
+private:
+    int quantidadeBebidas;
+    int quantidadeGarrafas;
+};
+
+class EstoqueDeBebidas {
+public:
+    EstoqueDeBebidas() {}
+
+    void adicionarBebida(const Bebida& bebida) {
+        bebidas.push_back(bebida);
     }
 
-    void verificarReposicao() {
-        for (Produto& produto : produtos) {
-            if (produto.getStatus() == StatusProduto::Reposicao) {
-
-
-                notificador.Alerta(produto.getNome());
+    void removerBebida(const string& nome) {
+        for (auto it = bebidas.begin(); it != bebidas.end(); ++it) {
+            if ((*it).getNome() == nome) {
+                bebidas.erase(it);
+                return;
             }
         }
     }
 
-private:
-
-    vector<Produto> produtos;
-
-
-    class Notificador {
-    public:
-        void Alerta(const string& nomeProduto) {
-            cout << "**Alerta** " << nomeProduto << " precisa de reposição urgentemente!" << endl;
+    bool verificacaoBebidas(const string& nome) {
+        for (const auto& bebida : bebidas) {
+            if (bebida.getNome() == nome) {
+                return true;
+            }
         }
-    };
-
-    Notificador notificador;
-};
-
-
-int main() {
-
-
-    Estoque estoque;
-
-   
-    estoque.adicaoProduto(Produto("Produto A", 15, 15));
-    estoque.adicaoProduto(Produto("Produto B", 20, 20));
-    estoque.produtos[0].quantidade += 6;
-    estoque.produtos[1].quantidade += 9;
-    estoque.produtos[0].quantidade -= 8;
-    estoque.produtos[1].quantidade -= 22;
-
-   
-    cout << "Detalhes do Estoque:" << endl;
-        for (Produto produto : estoque.produtos) {
-
-
-        cout << "Nome: " << produto.getNome() << endl;
-        cout << "Quantidade: " << produto.getQuantidade() << " unidades" << endl;
-        cout << "Quantidade Mínima: " << produto.getQuantidadeMinima() << endl;
-        cout << "Status: " << produto.getStatus() << endl;
-        
+        return false;
     }
 
-    
-    estoque.verificarReposicao();
-
-    return 0;
-}
+private:
+    vector<Bebida> bebidas;
+};
